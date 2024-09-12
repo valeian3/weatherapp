@@ -1,4 +1,4 @@
-# React Vite Todo application EXAMPLE project
+# React Vite Weather application EXAMPLE project
 
 <center>
 
