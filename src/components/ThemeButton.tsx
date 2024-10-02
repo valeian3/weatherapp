@@ -21,10 +21,12 @@ function ThemeButton() {
   };
   return (
     <button
+      aria-label="theme-button"
       onClick={toggleTheme}
       className="h-12 w-12 rounded-lg p-2 hover:bg-gray-100 dark:hover:bg-gray-700"
     >
       <svg
+        aria-label="theme-button-icon"
         className="fill-violet-700 block dark:hidden"
         fill="currentColor"
         viewBox="0 0 20 20"
@@ -32,6 +34,7 @@ function ThemeButton() {
         <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
       </svg>
       <svg
+        aria-label="theme-button-icon"
         className="fill-yellow-500 hidden dark:block"
         fill="currentColor"
         viewBox="0 0 20 20"

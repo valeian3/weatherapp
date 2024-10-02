@@ -10,7 +10,7 @@ function App() {
   const { data, isError, isLoading } = useCurrentConditions(searchQuery);
 
   return (
-    <div className="h-dvh flex flex-col bg-slate-100 dark:bg-slate-700 tablet:items-center transition-colors duration-100">
+    <div className="h-dvh flex flex-col bg-slate-200 dark:bg-slate-800 tablet:items-center transition-colors duration-100">
       <Header />
       <div className="px-4 py-4 tablet:w-full laptop:w-2/4">
         <Search setSearchQuery={setSearchQuery} />
@@ -31,10 +31,10 @@ function App() {
           {!isError && data && (
             <>
               <div className="flex flex-col items-center mt-12">
-                <span className="text-2xl text-slate-600 dark:text-slate-300">
+                <span className="text-2xl text-slate-800 dark:text-slate-300">
                   {data.location.name}
                 </span>
-                <span className="my-2 text-sm text-slate-400 dark:text-slate-500">
+                <span className="my-2 text-sm text-slate-600 dark:text-slate-400">
                   {`${data.location.region}, ${data.location.country}`}
                 </span>
                 <div className="flex flex-row items-center">
@@ -45,27 +45,27 @@ function App() {
                       alt={data.current.condition.text}
                     />
                   )}
-                  <span className="text-4xl text-slate-600 dark:text-slate-300">
+                  <span className="text-4xl text-slate-800 dark:text-slate-300">
                     {data.current.temp_c}°C
                   </span>
                 </div>
-                <p className="text-sm text-slate-400 dark:text-slate-500">
+                <p className="text-sm text-slate-600 dark:text-slate-400">
                   {data.current.condition.text}
                 </p>
                 <div className="w-2/4 mt-4 flex flex-row justify-around">
                   <div className="flex flex-col items-center">
-                    <span className="text-sm text-slate-400 dark:text-slate-500">
+                    <span className="text-sm text-slate-600 dark:text-slate-400">
                       Feels Like
                     </span>
-                    <span className="text-base text-slate-600 dark:text-slate-300">
+                    <span className="text-base text-slate-800 dark:text-slate-300">
                       {data.current.feelslike_c}°C
                     </span>
                   </div>
                   <div className="flex flex-col items-center">
-                    <span className="text-sm text-slate-400 dark:text-slate-500">
+                    <span className="text-sm text-slate-600 dark:text-slate-400">
                       UV
                     </span>
-                    <span className="text-base text-slate-600 dark:text-slate-300">
+                    <span className="text-base text-slate-800 dark:text-slate-300">
                       {data.current.uv}
                     </span>
                   </div>
