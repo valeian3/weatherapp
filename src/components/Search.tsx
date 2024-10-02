@@ -6,6 +6,7 @@ import React, {
   useState,
   FC,
   useMemo,
+  memo,
 } from "react";
 
 import { useDebounce, useSearchLocation } from "lib/hooks";
@@ -26,11 +27,11 @@ interface DropdownProps {
   recentSearches: IRecentSearch[];
 }
 
-const Dropdown: FC<DropdownProps> = ({
+const Dropdown = memo(function Dropdown({
   debouncedLocalQuery,
   handleSelectLocation,
   recentSearches,
-}) => {
+}: DropdownProps) {
   const { data, isLoading, isError } = useSearchLocation(debouncedLocalQuery);
 
   const combinedRecentAndSuggestionData: IRecentSearch[] = useMemo(
@@ -80,7 +81,7 @@ const Dropdown: FC<DropdownProps> = ({
 
   return (
     <>
-      {combinedRecentAndSuggestionData?.length > 0 && (
+      {combinedRecentAndSuggestionData.length > 0 && (
         <div className="z-10 w-full absolute bg-white rounded-lg shadow dark:bg-gray-700">
           <ul
             className="max-h-48 h-auto overflow-y-auto"
@@ -105,8 +106,7 @@ const Dropdown: FC<DropdownProps> = ({
                   </span>
                   {!item.searched && (
                     <span className="text-xs italic text-gray-500">
-                      {`Country > ${item.country}`}
-                      {" - "}
+                      {`Country > ${item.country}`} {" - "}{" "}
                       {`Region > ${item.region}`}
                     </span>
                   )}
@@ -118,7 +118,7 @@ const Dropdown: FC<DropdownProps> = ({
       )}
     </>
   );
-};
+});
 
 interface SearchProps {
   setSearchQuery: (query: string) => void;
