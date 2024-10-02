@@ -12,7 +12,7 @@ function App() {
   return (
     <div className="h-dvh flex flex-col bg-slate-200 dark:bg-slate-800 tablet:items-center transition-colors duration-100">
       <Header />
-      <div className="px-4 py-4 tablet:w-full laptop:w-2/4">
+      <div className="px-4 py-4 tablet:w-full laptop:w-2/4 flex-grow">
         <Search setSearchQuery={setSearchQuery} />
 
         <div className="max-w-md mx-auto mt-4">
@@ -74,6 +74,19 @@ function App() {
             </>
           )}
         </div>
+      </div>
+      <div className="flex gap-1 justify-center mt-auto mb-4">
+        <span className="text-slate-600 dark:text-slate-200">Powered by</span>
+        <a
+          aria-label="weather-api-website-link"
+          className="text-blue-700 dark:text-blue-400"
+          href="https://www.weatherapi.com/"
+          title="Weather API"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          WeatherAPI.com
+        </a>
       </div>
     </div>
   );
