@@ -40,9 +40,9 @@ export const useCurrentConditions = (location: string) => {
   });
 };
 
-const getSearchLocation = async (
+const getSuggestionLocations = async (
   location: string
-): Promise<ISearchSuggestion[] | null | []> => {
+): Promise<ISearchSuggestion[] | []> => {
   if (!location) return [];
   try {
     const response = await weatherApiInstance.get<ISearchSuggestion[]>(
@@ -61,14 +61,14 @@ const getSearchLocation = async (
     } else {
       console.log("An unexpected error occurred");
     }
-    return null;
+    return [];
   }
 };
 
-export const useSearchLocation = (location: string) => {
+export const useSuggestionLocation = (location: string) => {
   return useQuery({
     queryKey: [`${location}`],
-    queryFn: () => getSearchLocation(location),
+    queryFn: () => getSuggestionLocations(location),
     enabled: !!location,
     staleTime: 0,
     gcTime: 0,

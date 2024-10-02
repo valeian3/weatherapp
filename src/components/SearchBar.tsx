@@ -6,13 +6,11 @@ import React, {
   useState,
   FC,
   useMemo,
-  memo,
 } from "react";
 
-import { useDebounce, useSearchLocation } from "lib/hooks";
-
+import { useDebounce, useSuggestionLocation } from "lib/hooks";
+import SearchDropdown from "components/SearchDropdown";
 import SearchIcon from "assets/SearchIcon";
-import RecentIcon from "assets/RecentIcon";
 
 interface IRecentSearch {
   name: string;
@@ -21,118 +19,34 @@ interface IRecentSearch {
   searched: boolean;
 }
 
-interface DropdownProps {
-  debouncedLocalQuery: string;
-  handleSelectLocation: (location: string) => void;
-  recentSearches: IRecentSearch[];
+interface SearchProps {
+  setSearchQuery: (query: string) => void;
 }
 
-const Dropdown = memo(function Dropdown({
-  debouncedLocalQuery,
-  handleSelectLocation,
-  recentSearches,
-}: DropdownProps) {
-  const { data, isLoading, isError } = useSearchLocation(debouncedLocalQuery);
+const SearchBar: FC<SearchProps> = ({ setSearchQuery }) => {
+  const formRef = useRef<HTMLFormElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
-  const combinedRecentAndSuggestionData: IRecentSearch[] = useMemo(
+  const [localQuery, setLocalQuery] = useState<string>("");
+  const [isDropdownVisible, setIsDropdownVisible] = useState<boolean>(false);
+  const [recentSearches, setRecentSearches] = useState<IRecentSearch[]>([]);
+
+  const debouncedLocalQuery: string = useDebounce<string>(localQuery, 500);
+  const { data: suggestionLocationData } =
+    useSuggestionLocation(debouncedLocalQuery);
+
+  const suggestionList: IRecentSearch[] = useMemo(
     () => [
       ...recentSearches,
-      ...(data ?? []).map((item) => ({
+      ...(suggestionLocationData ?? []).map((item) => ({
         name: item.name,
         country: item.country,
         region: item.region,
         searched: false,
       })),
     ],
-    [recentSearches, data]
+    [recentSearches, suggestionLocationData]
   );
-
-  if (combinedRecentAndSuggestionData.length === 0)
-    return (
-      <div className="z-10 h-8 bg-white rounded-lg shadow dark:bg-gray-700"></div>
-    );
-
-  if (isError)
-    return (
-      <div className="z-10 bg-white rounded-lg shadow dark:bg-gray-700">
-        <span className="block px-4 py-2 rounded-lg text-sm hover:bg-gray-100 dark:hover:bg-gray-600 text-red-500 dark:text-red-400">
-          Something went wrong when fetching location...
-        </span>
-      </div>
-    );
-
-  if (isLoading)
-    return (
-      <div className="z-10 bg-white rounded-lg shadow dark:bg-gray-700">
-        <span className="block px-4 py-2 rounded-lg text-sm hover:bg-gray-100 dark:hover:bg-gray-600 text-slate-500 dark:text-slate-200">
-          Loading...
-        </span>
-      </div>
-    );
-
-  if (data?.length === 0)
-    return (
-      <div className="z-10 bg-white rounded-lg shadow dark:bg-gray-700">
-        <span className="block px-4 py-2 rounded-lg text-sm hover:bg-gray-100 dark:hover:bg-gray-600 text-slate-500 dark:text-slate-200">
-          Location not found...
-        </span>
-      </div>
-    );
-
-  return (
-    <>
-      {combinedRecentAndSuggestionData.length > 0 && (
-        <div className="z-10 w-full absolute bg-white rounded-lg shadow dark:bg-gray-700">
-          <ul
-            className="max-h-48 h-auto overflow-y-auto"
-            aria-labelledby="dropdownLocationResults"
-          >
-            {combinedRecentAndSuggestionData.map(
-              (item: IRecentSearch, index: number) => (
-                <li
-                  key={index}
-                  className="flex gap-2 items-center px-4 py-2 text-sm rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600"
-                  onClick={() => handleSelectLocation(item.name)}
-                >
-                  {item.searched ? <RecentIcon /> : <SearchIcon />}
-                  <span
-                    className={`${
-                      item.searched
-                        ? "text-gray-500 dark:text-gray-400"
-                        : "text-gray-700 dark:text-gray-200"
-                    }`}
-                  >
-                    {item.name}
-                  </span>
-                  {!item.searched && (
-                    <span className="text-xs italic text-gray-500">
-                      {`Country > ${item.country}`} {" - "}{" "}
-                      {`Region > ${item.region}`}
-                    </span>
-                  )}
-                </li>
-              )
-            )}
-          </ul>
-        </div>
-      )}
-    </>
-  );
-});
-
-interface SearchProps {
-  setSearchQuery: (query: string) => void;
-}
-
-const Search: FC<SearchProps> = ({ setSearchQuery }) => {
-  const formRef = useRef<HTMLFormElement>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
-
-  const [localQuery, setLocalQuery] = useState<string>("");
-  const [recentSearches, setRecentSearches] = useState<IRecentSearch[]>([]);
-  const [isDropdownVisible, setDropdownVisible] = useState<boolean>(false);
-
-  const debouncedLocalQuery = useDebounce<string>(localQuery, 500);
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     setLocalQuery(event?.target?.value);
@@ -159,9 +73,10 @@ const Search: FC<SearchProps> = ({ setSearchQuery }) => {
         setRecentSearches(updatedRecentSearches);
       }
 
-      setDropdownVisible(false);
       setLocalQuery("");
+      setIsDropdownVisible(false);
     },
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [localQuery, recentSearches]
   );
@@ -175,22 +90,13 @@ const Search: FC<SearchProps> = ({ setSearchQuery }) => {
           { name: location, searched: true, country: "", region: "" },
         ]);
       }
-      setDropdownVisible(false);
+
       setLocalQuery("");
+      setIsDropdownVisible(false);
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [recentSearches]
   );
-
-  const handleFocus = useCallback(() => {
-    setDropdownVisible(true);
-  }, []);
-
-  const handleBlur = useCallback(() => {
-    setTimeout(() => {
-      setDropdownVisible(false);
-    }, 200);
-  }, []);
 
   const handleKeyDown = useCallback(
     (event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -227,6 +133,16 @@ const Search: FC<SearchProps> = ({ setSearchQuery }) => {
     };
   }, []);
 
+  const handleFocus = useCallback(() => {
+    setIsDropdownVisible(true);
+  }, []);
+
+  const handleBlur = useCallback(() => {
+    setTimeout(() => {
+      setIsDropdownVisible(false);
+    }, 200);
+  }, []);
+
   return (
     <div className="max-w-md mx-auto relative">
       <form
@@ -254,9 +170,9 @@ const Search: FC<SearchProps> = ({ setSearchQuery }) => {
             required
             aria-label="Search city weather"
             value={localQuery}
-            onChange={handleChange}
-            onFocus={handleFocus}
             onBlur={handleBlur}
+            onFocus={handleFocus}
+            onChange={handleChange}
             onKeyDown={handleKeyDown}
           />
           <label className="text-slate-500 dark:text-slate-300 absolute end-20 bottom-2.5 font-medium text-sm px-4 py-2">
@@ -270,16 +186,15 @@ const Search: FC<SearchProps> = ({ setSearchQuery }) => {
           </button>
         </div>
       </form>
-
       {isDropdownVisible && (
-        <Dropdown
-          debouncedLocalQuery={debouncedLocalQuery}
-          handleSelectLocation={handleSelectLocation}
-          recentSearches={recentSearches}
+        <SearchDropdown
+          suggestionList={suggestionList}
+          suggestionLocationData={suggestionLocationData}
+          handleSelectListItem={handleSelectLocation}
         />
       )}
     </div>
   );
 };
 
-export default Search;
+export default SearchBar;

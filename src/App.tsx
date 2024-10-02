@@ -3,23 +3,44 @@ import { useState } from "react";
 import { useCurrentConditions } from "lib/hooks";
 
 import Header from "components/Header";
-import Search from "components/Search";
+import SearchBar from "components/SearchBar";
 
 function App() {
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const { data, isError, isLoading } = useCurrentConditions(searchQuery);
+
+  const {
+    data: currentConditionsData,
+    isError,
+    isLoading,
+  } = useCurrentConditions(searchQuery);
 
   return (
     <div className="h-dvh flex flex-col bg-slate-200 dark:bg-slate-800 tablet:items-center transition-colors duration-100">
       <Header />
       <div className="px-4 py-4 tablet:w-full laptop:w-2/4 flex-grow">
-        <Search setSearchQuery={setSearchQuery} />
+        <SearchBar setSearchQuery={setSearchQuery} />
 
         <div className="max-w-md mx-auto mt-4">
           {isLoading && (
-            <span className="block py-2 rounded-lg text-sm dark:text-slate-200">
-              Loading...
-            </span>
+            <div className="flex flex-col items-center mt-12 animate-pulse">
+              <div className="h-8 w-48 bg-gray-300 dark:bg-gray-700 rounded"></div>
+              <div className="my-2 h-5 w-36 bg-gray-300 dark:bg-gray-700 rounded"></div>
+              <div className="flex flex-row items-center">
+                <div className="w-20 h-20 bg-gray-300 dark:bg-gray-700 rounded-full"></div>
+                <div className="ml-4 h-12 w-20 bg-gray-300 dark:bg-gray-700 rounded"></div>
+              </div>
+              <div className="my-2 h-5 w-24 bg-gray-300 dark:bg-gray-700 rounded"></div>
+              <div className="w-2/4 mt-4 flex flex-row justify-around">
+                <div className="flex flex-col items-center">
+                  <div className="h-5 w-16 bg-gray-300 dark:bg-gray-700 rounded"></div>
+                  <div className="mt-1 h-6 w-20 bg-gray-300 dark:bg-gray-700 rounded"></div>
+                </div>
+                <div className="flex flex-col items-center">
+                  <div className="h-5 w-8 bg-gray-300 dark:bg-gray-700 rounded"></div>
+                  <div className="mt-1 h-6 w-10 bg-gray-300 dark:bg-gray-700 rounded"></div>
+                </div>
+              </div>
+            </div>
           )}
 
           {isError && (
@@ -28,29 +49,29 @@ function App() {
             </span>
           )}
 
-          {!isError && data && (
+          {!isError && currentConditionsData && (
             <>
               <div className="flex flex-col items-center mt-12">
                 <span className="text-2xl text-slate-800 dark:text-slate-300">
-                  {data.location.name}
+                  {currentConditionsData.location.name}
                 </span>
                 <span className="my-2 text-sm text-slate-600 dark:text-slate-400">
-                  {`${data.location.region}, ${data.location.country}`}
+                  {`${currentConditionsData.location.region}, ${currentConditionsData.location.country}`}
                 </span>
                 <div className="flex flex-row items-center">
-                  {data.current.condition.icon && (
+                  {currentConditionsData.current.condition.icon && (
                     <img
                       className="w-20 h-20"
-                      src={data.current.condition.icon}
-                      alt={data.current.condition.text}
+                      src={currentConditionsData.current.condition.icon}
+                      alt={currentConditionsData.current.condition.text}
                     />
                   )}
                   <span className="text-4xl text-slate-800 dark:text-slate-300">
-                    {data.current.temp_c}°C
+                    {currentConditionsData.current.temp_c}°C
                   </span>
                 </div>
                 <p className="text-sm text-slate-600 dark:text-slate-400">
-                  {data.current.condition.text}
+                  {currentConditionsData.current.condition.text}
                 </p>
                 <div className="w-2/4 mt-4 flex flex-row justify-around">
                   <div className="flex flex-col items-center">
@@ -58,7 +79,7 @@ function App() {
                       Feels Like
                     </span>
                     <span className="text-base text-slate-800 dark:text-slate-300">
-                      {data.current.feelslike_c}°C
+                      {currentConditionsData.current.feelslike_c}°C
                     </span>
                   </div>
                   <div className="flex flex-col items-center">
@@ -66,7 +87,7 @@ function App() {
                       UV
                     </span>
                     <span className="text-base text-slate-800 dark:text-slate-300">
-                      {data.current.uv}
+                      {currentConditionsData.current.uv}
                     </span>
                   </div>
                 </div>
