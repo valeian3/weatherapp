@@ -4,16 +4,25 @@ import { useQuery } from "@tanstack/react-query";
 
 import weatherApiInstance from "./api";
 
-const getCurrentConditions = async (location: string) => {
-  if (!location) return;
+import type { ISearchLocation, ISearchSuggestion } from "lib/types";
+
+const getCurrentConditions = async (
+  location: string
+): Promise<ISearchLocation | null> => {
+  if (!location) return null;
   try {
-    const response = await weatherApiInstance.get("/current.json", {
-      params: { q: location },
-    });
+    const response = await weatherApiInstance.get<ISearchLocation>(
+      "/current.json",
+      {
+        params: { q: location },
+      }
+    );
+
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
       console.log(
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         error.response?.data?.error?.message ?? "An unexpected error occurred"
       );
     } else {
@@ -31,16 +40,22 @@ export const useCurrentConditions = (location: string) => {
   });
 };
 
-const getSearchLocation = async (location: string) => {
+const getSearchLocation = async (
+  location: string
+): Promise<ISearchSuggestion[] | null | []> => {
   if (!location) return [];
   try {
-    const response = await weatherApiInstance.get("/search.json", {
-      params: { q: location },
-    });
+    const response = await weatherApiInstance.get<ISearchSuggestion[]>(
+      "/search.json",
+      {
+        params: { q: location },
+      }
+    );
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
       console.log(
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         error.response?.data?.error?.message ?? "An unexpected error occurred"
       );
     } else {

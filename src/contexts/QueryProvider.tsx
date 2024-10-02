@@ -36,6 +36,7 @@ const QueryProvider = ({ children }: PropsWithChildren) => {
   const [showDevtools, setShowDevtools] = useState<boolean>(false);
 
   useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-expect-error
     window.toggleDevtools = () => setShowDevtools((old) => !old);
   }, []);

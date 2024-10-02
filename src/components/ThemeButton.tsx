@@ -8,8 +8,7 @@ function ThemeButton() {
     if (theme === "dark") {
       document.documentElement.classList.add("dark");
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [theme]);
 
   const toggleTheme = () => {
     if (theme === "dark") {
