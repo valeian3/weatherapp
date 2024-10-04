@@ -43,7 +43,7 @@ function SearchDropdown({
 }: SearchDropdownProps): JSX.Element {
   if (suggestionLocationData?.length === 0)
     return (
-      <div className="z-10 bg-white rounded-lg shadow dark:bg-gray-700">
+      <div className="absolute z-10 w-full mt-4 bg-white rounded-lg shadow dark:bg-gray-700">
         <span className="block px-4 py-2 rounded-lg text-sm hover:bg-gray-100 dark:hover:bg-gray-600 text-slate-500 dark:text-slate-200">
           Location not found...
         </span>
@@ -53,7 +53,7 @@ function SearchDropdown({
   return (
     <>
       {suggestionList.length > 0 && (
-        <div className="z-10 w-full absolute bg-white rounded-lg shadow dark:bg-gray-700">
+        <div className="absolute z-10 w-full mt-4 bg-white rounded-lg shadow dark:bg-gray-700">
           <ul
             className="max-h-48 h-auto overflow-y-auto"
             aria-labelledby="search-dropdown-suggestions"

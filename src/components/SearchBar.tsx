@@ -24,9 +24,9 @@ interface SearchProps {
 }
 
 const SearchBar: FC<SearchProps> = ({ setSearchQuery }) => {
-  const formRef = useRef<HTMLFormElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
+  const [isInputFocused, setIsInputFocused] = useState(false);
   const [localQuery, setLocalQuery] = useState<string>("");
   const [isDropdownVisible, setIsDropdownVisible] = useState<boolean>(false);
   const [recentSearches, setRecentSearches] = useState<IRecentSearch[]>([]);
@@ -52,11 +52,11 @@ const SearchBar: FC<SearchProps> = ({ setSearchQuery }) => {
     setLocalQuery(event?.target?.value);
   };
 
-  const handleSubmit = useCallback(
-    (e: React.FormEvent) => {
-      e.preventDefault();
-      setSearchQuery(localQuery);
+  const handleSelectLocation = useCallback(
+    (location: string) => {
+      setSearchQuery(location);
 
+      // FIFO method
       if (localQuery) {
         const updatedRecentSearches = [...recentSearches];
 
@@ -76,24 +76,6 @@ const SearchBar: FC<SearchProps> = ({ setSearchQuery }) => {
       setLocalQuery("");
       setIsDropdownVisible(false);
     },
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [localQuery, recentSearches]
-  );
-
-  const handleSelectLocation = useCallback(
-    (location: string) => {
-      setSearchQuery(location);
-      if (location && !recentSearches.find((item) => item.name === location)) {
-        setRecentSearches([
-          ...recentSearches,
-          { name: location, searched: true, country: "", region: "" },
-        ]);
-      }
-
-      setLocalQuery("");
-      setIsDropdownVisible(false);
-    },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [recentSearches]
   );
@@ -104,7 +86,6 @@ const SearchBar: FC<SearchProps> = ({ setSearchQuery }) => {
         case "Enter":
           event.preventDefault();
           event.currentTarget.blur();
-          formRef.current?.requestSubmit();
           break;
 
         case "Escape":
@@ -135,57 +116,53 @@ const SearchBar: FC<SearchProps> = ({ setSearchQuery }) => {
 
   const handleFocus = useCallback(() => {
     setIsDropdownVisible(true);
+    setIsInputFocused(true);
   }, []);
 
   const handleBlur = useCallback(() => {
     setTimeout(() => {
       setIsDropdownVisible(false);
+      setIsInputFocused(false);
     }, 200);
   }, []);
 
   return (
-    <div className="max-w-md mx-auto relative">
-      <form
-        ref={formRef}
-        className="my-4"
-        autoComplete="off"
-        onSubmit={handleSubmit}
+    <div className="max-w-md mx-auto mt-4 relative">
+      <label
+        htmlFor="default-search"
+        className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white"
       >
-        <label
-          htmlFor="default-search"
-          className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white"
-        >
-          Search
-        </label>
-        <div className="relative">
-          <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-            <SearchIcon />
-          </div>
-          <input
-            type="search"
-            id="default-search"
-            ref={inputRef}
-            className="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-700 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-700 dark:focus:border-blue-500"
-            placeholder="Search location..."
-            required
-            aria-label="Search city weather"
-            value={localQuery}
-            onBlur={handleBlur}
-            onFocus={handleFocus}
-            onChange={handleChange}
-            onKeyDown={handleKeyDown}
-          />
-          <label className="text-slate-500 dark:text-slate-300 absolute end-20 bottom-2.5 font-medium text-sm px-4 py-2">
+        Search
+      </label>
+      <div className="relative">
+        <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+          <SearchIcon />
+        </div>
+        <input
+          type="search"
+          id="default-search"
+          ref={inputRef}
+          className="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+          placeholder="Search location..."
+          required
+          aria-label="Search city weather"
+          value={localQuery}
+          onBlur={handleBlur}
+          onFocus={handleFocus}
+          onChange={handleChange}
+          onKeyDown={handleKeyDown}
+        />
+        {isInputFocused ? (
+          <label className="absolute px-4 py-2 end-2.5 bottom-2.5 rounded-md font-medium text-sm text-slate-100 bg-slate-600 dark:bg-slate-800 dark:text-slate-300">
+            ESC
+          </label>
+        ) : (
+          <label className="absolute px-4 py-2 end-2.5 bottom-2.5 rounded-md font-medium text-sm text-slate-100 bg-slate-600 dark:bg-slate-800 dark:text-slate-300">
             Ctrl K
           </label>
-          <button
-            type="submit"
-            className="text-white absolute end-2.5 bottom-2.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-          >
-            Search
-          </button>
-        </div>
-      </form>
+        )}
+      </div>
+
       {isDropdownVisible && (
         <SearchDropdown
           suggestionList={suggestionList}
