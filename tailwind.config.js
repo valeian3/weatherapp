@@ -23,6 +23,9 @@ export default {
         'action': '#EECAD5',
         ...colors
       },
+      backdropBlur: {
+        xs: '2px',
+      },
       screens: {
 
         'tablet': '640px',

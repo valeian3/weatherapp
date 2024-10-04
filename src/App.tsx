@@ -93,16 +93,16 @@ function App() {
                   </div>
                 </div>
 
-                <div className="w-full divide-y divide-solid divide-slate-500 px-4 py-2 mt-8 rounded-md flex flex-col bg-gray-50 dark:bg-gray-700">
+                <div className="w-full px-4 py-2 mt-8 rounded-md flex flex-col bg-white/20 dark:bg-gray-700/20 border border-white/30 dark:border-gray-700/30 backdrop-blur-lg shadow-lg">
                   <span className="text-xs pb-2 text-gray-700 dark:text-gray-200">
                     DAILY FORECAST
                   </span>
                   {weatherData.forecast.forecastday.map((item, index) => (
                     <div
                       key={index}
-                      className="h-12 flex flex-row justify-between items-center hover:bg-gray-100 dark:hover:bg-gray-600"
+                      className="h-12 flex flex-row justify-between items-center bg-white/10 dark:bg-gray-700/10 hover:bg-white/20 dark:hover:bg-gray-700/20 border border-white/20 dark:border-gray-700/20 backdrop-blur-md"
                     >
-                      <span className="w-8 grow text-gray-700 dark:text-gray-200">
+                      <span className="w-8 grow text-gray-700 dark:text-gray-200 text-center">
                         {getDayOfWeek(item.date)}
                       </span>
                       <div className="flex grow items-center justify-center">
