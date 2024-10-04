@@ -54,24 +54,23 @@ const SearchBar: FC<SearchProps> = ({ setSearchQuery }) => {
 
   const handleSelectLocation = useCallback(
     (location: string) => {
+      if (!location) return;
       setSearchQuery(location);
 
       // FIFO method
-      if (localQuery) {
-        const updatedRecentSearches = [...recentSearches];
+      const updatedRecentSearches = [...recentSearches];
 
-        if (updatedRecentSearches.length === 3) {
-          updatedRecentSearches.shift();
-        }
-
-        updatedRecentSearches.push({
-          name: localQuery,
-          searched: true,
-          country: "",
-          region: "",
-        });
-        setRecentSearches(updatedRecentSearches);
+      if (updatedRecentSearches.length === 3) {
+        updatedRecentSearches.shift();
       }
+
+      updatedRecentSearches.push({
+        name: location,
+        searched: true,
+        country: "",
+        region: "",
+      });
+      setRecentSearches(updatedRecentSearches);
 
       setLocalQuery("");
       setIsDropdownVisible(false);
@@ -83,11 +82,6 @@ const SearchBar: FC<SearchProps> = ({ setSearchQuery }) => {
   const handleKeyDown = useCallback(
     (event: React.KeyboardEvent<HTMLInputElement>) => {
       switch (event.key) {
-        case "Enter":
-          event.preventDefault();
-          event.currentTarget.blur();
-          break;
-
         case "Escape":
           event.currentTarget.blur();
           break;
@@ -102,7 +96,6 @@ const SearchBar: FC<SearchProps> = ({ setSearchQuery }) => {
   useEffect(() => {
     const handleGlobalKeyDown = (event: KeyboardEvent) => {
       if (event.ctrlKey && event.key === "k") {
-        event.preventDefault();
         inputRef.current?.focus();
       }
     };
@@ -139,17 +132,16 @@ const SearchBar: FC<SearchProps> = ({ setSearchQuery }) => {
           <SearchIcon />
         </div>
         <input
+          ref={inputRef}
           type="search"
           id="default-search"
-          ref={inputRef}
-          className="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
-          placeholder="Search location..."
-          required
           aria-label="Search city weather"
+          placeholder="Search location..."
+          className="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
           value={localQuery}
+          onChange={handleChange}
           onBlur={handleBlur}
           onFocus={handleFocus}
-          onChange={handleChange}
           onKeyDown={handleKeyDown}
         />
         {isInputFocused ? (
