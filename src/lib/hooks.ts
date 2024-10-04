@@ -4,17 +4,17 @@ import { useQuery } from "@tanstack/react-query";
 
 import weatherApiInstance from "./api";
 
-import type { ISearchLocation, ISearchSuggestion } from "lib/types";
+import type { ICurrentAndForecast, ISearchSuggestion } from "lib/types";
 
-const getCurrentConditions = async (
+const getCurrentConditionsAndForecast = async (
   location: string
-): Promise<ISearchLocation | null> => {
+): Promise<ICurrentAndForecast | null> => {
   if (!location) return null;
   try {
-    const response = await weatherApiInstance.get<ISearchLocation>(
-      "/current.json",
+    const response = await weatherApiInstance.get<ICurrentAndForecast>(
+      "/forecast.json",
       {
-        params: { q: location },
+        params: { q: location, aqi: "yes", days: 3 },
       }
     );
 
@@ -35,7 +35,7 @@ const getCurrentConditions = async (
 export const useCurrentConditions = (location: string) => {
   return useQuery({
     queryKey: [`search-location-${location}`],
-    queryFn: () => getCurrentConditions(location),
+    queryFn: () => getCurrentConditionsAndForecast(location),
     enabled: !!location,
   });
 };

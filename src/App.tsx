@@ -1,6 +1,7 @@
 import { useState } from "react";
 
 import { useCurrentConditions } from "lib/hooks";
+import { getDayOfWeek } from "lib/utils";
 
 import Header from "components/Header";
 import SearchBar from "components/SearchBar";
@@ -9,7 +10,7 @@ function App() {
   const [searchQuery, setSearchQuery] = useState<string>("");
 
   const {
-    data: currentConditionsData,
+    data: weatherData,
     isError,
     isLoading,
   } = useCurrentConditions(searchQuery);
@@ -49,29 +50,29 @@ function App() {
             </span>
           )}
 
-          {!isError && currentConditionsData && (
+          {!isError && weatherData && (
             <>
-              <div className="flex flex-col items-center mt-12">
+              <div className="flex flex-col items-center mt-6">
                 <span className="text-2xl text-slate-800 dark:text-slate-300">
-                  {currentConditionsData.location.name}
+                  {weatherData.location.name}
                 </span>
                 <span className="my-2 text-sm text-slate-600 dark:text-slate-400">
-                  {`${currentConditionsData.location.region}, ${currentConditionsData.location.country}`}
+                  {`${weatherData.location.region}, ${weatherData.location.country}`}
                 </span>
                 <div className="flex flex-row items-center">
-                  {currentConditionsData.current.condition.icon && (
+                  {weatherData.current.condition.icon && (
                     <img
                       className="w-20 h-20"
-                      src={currentConditionsData.current.condition.icon}
-                      alt={currentConditionsData.current.condition.text}
+                      src={weatherData.current.condition.icon}
+                      alt={weatherData.current.condition.text}
                     />
                   )}
                   <span className="text-4xl text-slate-800 dark:text-slate-300">
-                    {currentConditionsData.current.temp_c}°C
+                    {weatherData.current.temp_c}°C
                   </span>
                 </div>
                 <p className="text-sm text-slate-600 dark:text-slate-400">
-                  {currentConditionsData.current.condition.text}
+                  {weatherData.current.condition.text}
                 </p>
                 <div className="w-2/4 mt-4 flex flex-row justify-around">
                   <div className="flex flex-col items-center">
@@ -79,7 +80,7 @@ function App() {
                       Feels Like
                     </span>
                     <span className="text-base text-slate-800 dark:text-slate-300">
-                      {currentConditionsData.current.feelslike_c}°C
+                      {weatherData.current.feelslike_c}°C
                     </span>
                   </div>
                   <div className="flex flex-col items-center">
@@ -87,9 +88,38 @@ function App() {
                       UV
                     </span>
                     <span className="text-base text-slate-800 dark:text-slate-300">
-                      {currentConditionsData.current.uv}
+                      {weatherData.current.uv}
                     </span>
                   </div>
+                </div>
+
+                <div className="w-full divide-y divide-solid divide-slate-500 px-4 py-2 mt-8 rounded-md flex flex-col bg-gray-50 dark:bg-gray-700">
+                  <span className="text-xs pb-2 text-gray-700 dark:text-gray-200">
+                    DAILY FORECAST
+                  </span>
+                  {weatherData.forecast.forecastday.map((item, index) => (
+                    <div
+                      key={index}
+                      className="h-12 flex flex-row justify-between items-center hover:bg-gray-100 dark:hover:bg-gray-600"
+                    >
+                      <span className="w-8 grow text-gray-700 dark:text-gray-200">
+                        {getDayOfWeek(item.date)}
+                      </span>
+                      <div className="flex grow items-center justify-center">
+                        <img
+                          className="w-8 h-8"
+                          src={item.day.condition.icon}
+                          alt={item.day.condition.text}
+                        />
+                      </div>
+                      <span className="w-8 grow text-gray-700 dark:text-gray-200">
+                        {`L: ${item.day.mintemp_c}°C`}
+                      </span>
+                      <span className="w-8 grow text-gray-700 dark:text-gray-200">
+                        {`H: ${item.day.maxtemp_c}°C`}
+                      </span>
+                    </div>
+                  ))}
                 </div>
               </div>
             </>
