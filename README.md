@@ -9,6 +9,8 @@
 
 </center>
 
+Here is a live [demo](https://www.weatherapp.valerianbahnik.from.hr).
+
 ## A fully functional EXAMPLE project written with React, Vite, TypeScript, Tailwind and TanStack Query
 
 This project showcases a modern weather app built with **React**, **Vite**, **TypeScript**, **Tailwind CSS** and **TanStack Query**. It highlights how to create a scalable and efficient application using these cutting-edge technologies. Ideal for learning and reference, this example demonstrates best practices in web development with a focus on performance and design.
