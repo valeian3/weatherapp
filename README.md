@@ -33,7 +33,7 @@ Coming soon...
 
 ## For developers
 
-Coming soon...
+Ensure you have .env file configured as shown in .env.example. For api url check API section.
 
 ## Find a bug?
 
@@ -42,3 +42,11 @@ Instruction on how to follow up with pull request coming soon...
 ## Known issues (Work in progress)
 
 This project is still ongoing. Project is meant for training and finding best practices for constructing new project.
+
+## API
+
+The API used in project is:
+
+```
+https://www.weatherapi.com/
+```
